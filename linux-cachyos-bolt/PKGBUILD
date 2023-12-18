@@ -21,6 +21,8 @@ _cachy_config=${_cachy_config-y}
 # 'sched-ext' - select 'sched-ext' Scheduler, based on EEVDF
 _cpusched=${_cpusched-cachyos}
 
+# Dont strip vmlinux for bolt
+_dontstrip=${_dontstrip-y}
 
 ### Tweak kernel options prior to a build via nconfig
 _makenconfig=${_makenconfig-}
@@ -160,11 +162,11 @@ _build_nvidia=${_build_nvidia-}
 _bcachefs=${_bcachefs-}
 
 if [[ "$_use_llvm_lto" = "thin" || "$_use_llvm_lto" = "full" ]] && [ -n "$_use_lto_suffix" ]; then
-    pkgsuffix=cachyos-lto
+    pkgsuffix=bolt-lto
     pkgbase=linux-$pkgsuffix
 
 else
-    pkgsuffix=cachyos
+    pkgsuffix=bolt
     pkgbase=linux-$pkgsuffix
 fi
 _major=6.6
@@ -781,8 +783,13 @@ _package-headers() {
         esac
     done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
+
+    if [ -n "$_dontstrip" ]; then
+    echo "Dont strip vmlinux"
+    else
     echo "Stripping vmlinux..."
     strip -v $STRIP_STATIC "$builddir/vmlinux"
+    fi
 
     echo "Adding symlink..."
     mkdir -p "$pkgdir/usr/src"
