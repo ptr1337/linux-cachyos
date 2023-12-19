@@ -156,7 +156,7 @@ _build_zfs=${_build_zfs-}
 
 # Builds the nvidia module and package it into a own base
 # This does replace the requirement of nvidia-dkms
-_build_nvidia=${_build_nvidia-}
+_build_nvidia=${_build_nvidia-y}
 
 # Enable bcachefs
 _bcachefs=${_bcachefs-}
